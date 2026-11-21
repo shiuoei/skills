@@ -1,0 +1,16 @@
+{
+  "name": "Your App",
+  "slug": "your-app",
+  "identifier": "com.example.your-app",
+  "version": "0.1.0",
+  "copyright": "© 2026 Your Name",
+  "license": "MIT",
+  "icon": "resources/icon.png",
+  "main": ".",
+  "out": "build",
+  "updates": {
+    "publicKey": "REPLACE_WITH_CONTENT_OF_mygo-update.pub",
+    "github": "OWNER/REPO",
+    "changelog": "RELEASES.md"
+  }
+}

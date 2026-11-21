@@ -1,0 +1,76 @@
+name: Release
+
+# 推 tag 触发全自动发布：GitHub 的 runner 上构建、签名、上传并发布。
+# 本地无需安装 gh，也无需手动上传。
+#
+# 前置（一次性）：
+#   1. mygo keygen 生成更新密钥；公钥写入 mygo.config.ts / mygo.json 的 updates.publicKey；
+#   2. 私钥内容存为仓库 Secret：MYGO_UPDATER_PRIVATE_KEY；
+#   3. 发布说明文件里有与版本一致的 `## <version>` 小节。
+# 发布：提交并推送 main，然后 git tag v<version> && git push origin v<version>。
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the tagged commit
+        uses: actions/checkout@v7
+        with:
+          # 完整历史与 tag：版本戳和读取已发布版本都更稳。
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      # 本模板按原生 UI 项目（mygo.json）写；Web 前端项目改读 mygo.config.ts。
+      # 只构建 windows/amd64；要发布多平台时按 references/12 的矩阵工作流展开。
+      # `mygo build -upload` 上传到配置版本对应的 tag；不一致会挂错 release。
+      - name: Check that the tag matches the configured version
+        run: |
+          version="$(python3 -c 'import json; print(json.load(open("mygo.json"))["version"])')"
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::tag $GITHUB_REF_NAME does not match version $version (expected v$version)"
+            exit 1
+          fi
+          echo "Releasing version $version"
+
+      # 在 Linux 上交叉构建 Windows 版需要 makensis 生成安装包。
+      - name: Install NSIS
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nsis
+
+      - name: Build, sign and upload the release assets
+        env:
+          CGO_ENABLED: "0"
+          GH_TOKEN: ${{ github.token }}
+          MYGO_UPDATER_PRIVATE_KEY: ${{ secrets.MYGO_UPDATER_PRIVATE_KEY }}
+        run: go run github.com/egoist/mygo/cmd/mygo build -upload -platform windows/amd64
+
+      # 上传成功后才发布：任何一步失败，release 停在草稿状态，客户端看不到。
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release edit "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --draft=false
+
+      - name: Verify the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" \
+            --json isDraft,tagName,assets \
+            --jq '{draft: .isDraft, tag: .tagName, assets: [.assets[].name]}'

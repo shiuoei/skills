@@ -1,0 +1,22 @@
+# 名称和描述读取各技能的 SKILL.md；这里只维护导航信息。
+version: 1
+skills:
+  buildadmin-dev:
+    category: 项目开发
+    tags: [BuildAdmin, ThinkPHP, Vue, 后台, CRUD, 菜单权限]
+    status: experimental
+    platforms: [windows, macos, linux]
+    example: "用 buildadmin-dev 新增订单管理页面，包含表格、表单和菜单权限"
+  daily-report:
+    category: 工作整理
+    tags: [日报, 工作总结, 收工, 按周归档]
+    status: experimental
+    platforms: [windows, macos, linux]
+    favorite: true
+    example: "用 daily-report 整理今天已完成的工作"
+  mygo-dev:
+    category: 项目开发
+    tags: [MyGo, Go, 桌面应用, 原生UI, 托盘, 打包, 自动更新]
+    status: experimental
+    platforms: [windows, macos, linux]
+    example: "用 mygo-dev 开发一个带托盘菜单的桌面工具"

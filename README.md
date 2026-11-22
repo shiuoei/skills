@@ -10,7 +10,7 @@
 
 ## 技能导航
 
-当前收录 4 个技能。
+当前收录 4 个本仓库技能。
 
 ### 常用入口
 
@@ -29,6 +29,14 @@
 | 技能 | 用途 | 关键词 | 状态 | 示例指令 |
 | --- | --- | --- | --- | --- |
 | [daily-report](skills/daily-report/SKILL.md) | 将已完成的工作写成通俗日报，按周归档 | 日报、工作总结、收工、按周归档 | 试用中 | 用 daily-report 整理今天已完成的工作 |
+
+### 外部技能
+
+| 技能 | 功能 | 来源 |
+| --- | --- | --- |
+| ui-ux-pro-max | 检索 UI/UX 风格、配色、字体、图表和体验指南，生成设计系统建议 | [项目来源](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) |
+| uni-app | 查询 uni-app 跨端开发的组件、API、配置与平台适配资料 | [uview-pro/skills](https://github.com/uview-pro/skills/tree/main/skills/uni-app) |
+| uview-pro | 查询 uView Pro 组件、工具、组合式函数、主题与布局用法 | [官方 Skills 仓库](https://github.com/uview-pro/skills) |
 
 ## 目录约定
 

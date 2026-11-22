@@ -7,6 +7,12 @@ skills:
     status: experimental
     platforms: [windows, macos, linux]
     example: "用 buildadmin-dev 新增订单管理页面，包含表格、表单和菜单权限"
+  buildadmin-module-dev:
+    category: 项目开发
+    tags: [BuildAdmin, 模块开发, 安装包, ZIP, Nuxt, install.sql]
+    status: experimental
+    platforms: [windows, macos, linux]
+    example: "用 buildadmin-module-dev 将当前项目的公告管理功能打包成可安装模块并验证"
   daily-report:
     category: 工作整理
     tags: [日报, 工作总结, 收工, 按周归档]

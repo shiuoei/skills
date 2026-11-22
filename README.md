@@ -10,7 +10,7 @@
 
 ## 技能导航
 
-当前收录 3 个技能。
+当前收录 4 个技能。
 
 ### 常用入口
 
@@ -21,6 +21,7 @@
 | 技能 | 用途 | 关键词 | 状态 | 示例指令 |
 | --- | --- | --- | --- | --- |
 | [buildadmin-dev](skills/buildadmin-dev/SKILL.md) | BuildAdmin 后台二次开发：表格、表单、接口及菜单权限 | BuildAdmin、ThinkPHP、Vue、后台、CRUD、菜单权限 | 试用中 | 用 buildadmin-dev 新增订单管理页面，包含表格、表单和菜单权限 |
+| [buildadmin-module-dev](skills/buildadmin-module-dev/SKILL.md) | BuildAdmin 可安装模块的开发、打包与验证 | BuildAdmin、模块开发、安装包、ZIP、Nuxt、install.sql | 试用中 | 用 buildadmin-module-dev 将当前项目的公告管理功能打包成可安装模块并验证 |
 | [mygo-dev](skills/mygo-dev/SKILL.md) | MyGo 应用开发：原生 UI、托盘、打包及自动更新 | MyGo、Go、桌面应用、原生UI、托盘、打包、自动更新 | 试用中 | 用 mygo-dev 开发一个带托盘菜单的桌面工具 |
 
 ### 工作整理

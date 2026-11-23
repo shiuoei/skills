@@ -7,18 +7,20 @@ description: Develop, package, and verify installable BuildAdmin modules, includ
 
 适用于通过 BuildAdmin「模块管理」安装的模块。普通项目内功能开发使用 `buildadmin-dev`；涉及模块包、安装或升级行为时使用本技能。
 
+BuildAdmin 官方「模块开发」文档的要点已整理进 `references/`（见文末「参考文件」），直接读本地文件，不必联网访问文档站。
+
 ## 确认安装边界
 
-1. 查看当前项目的模块安装器、同类模块和目标 BuildAdmin 版本，以项目实际安装逻辑为准。官方参考：[开始](https://doc.buildadmin.com/senior/module/start.html)、[目录结构](https://doc.buildadmin.com/senior/module/directoryStructure.html)。
+1. 查看当前项目的模块安装器、同类模块和目标 BuildAdmin 版本，以项目实际安装逻辑为准。模块能力、ZIP 根布局、可覆盖目录和安装顺序见 [模块包结构与安装映射](references/package-layout.md)。
 2. 列出模块用到的 PHP、`web`、`web-nuxt`、配置、静态资源和依赖。区分模块自身文件与必须覆盖的项目共享文件；检查共享文件的冲突和版本兼容性。
-3. ZIP 根目录放 `info.ini`、`config.json`、需要数据库时的 `install.sql`，以及以模块标识命名的核心类。要复制到项目根目录的文件按原路径放在 ZIP 的 `app/`、`config/`、`extend/`、`public/`、`vendor/`、`web/`、`web-nuxt/` 等目录下。不要在 ZIP 内再套一层 `modules/<标识>/`。
+3. ZIP 根目录放 `info.ini`、`config.json`、需要数据库时的 `install.sql`，以及需要生命周期钩子时以模块标识命名的核心类。要复制到项目根目录的文件按原路径放在 ZIP 的 `app/`、`config/`、`extend/`、`public/`、`vendor/`、`web/`、`web-nuxt/` 这些目录下。不要在 ZIP 内再套一层 `modules/<标识>/`。
 
 ## 元数据、数据库和生命周期
 
-- `info.ini` 的 `uid` 是**模块标识**，不是管理员 ID；填写标题、作者、版本和状态。`config.json` 声明安装器支持的 Composer/NPM 依赖，并确认依赖会安装到哪个前端工程，不能假设 `web` 的 NPM 配置会自动处理 `web-nuxt`。参考 [基本信息](https://doc.buildadmin.com/senior/module/basicInfo.html)、[模块配置](https://doc.buildadmin.com/senior/module/configJson.html)。
-- 新安装所需的完整表结构放在模块根目录 `install.sql`；表名使用 `__PREFIX__` 和模块标识前缀。首次发布前可以合并未发布的增量脚本；发布后保留已有安装的升级路径，不要把 `CREATE TABLE IF NOT EXISTS` 当作现有表的字段升级。参考 [安装 SQL](https://doc.buildadmin.com/senior/module/installSql.html)。
-- 核心类实现任务所需的 `install`、`uninstall`、`update`、`enable`、`disable` 钩子。确认 SQL、文件复制与钩子的执行时序，避免重复执行非幂等操作；卸载只清理本模块拥有的资源。参考 [核心控制器](https://doc.buildadmin.com/senior/module/coreController.html)、[行为事件](https://doc.buildadmin.com/senior/module/event.html)。
-- 需要修改 `web/src/main.ts` 时，先看 [WEB 引导程序](https://doc.buildadmin.com/senior/module/webBootstrap.html) 和项目已有机制，避免无条件覆盖启动文件。
+- `info.ini` 的 `uid` 是**模块标识**，不是管理员 ID；填写标题、作者和版本，`state` 字段保留、由系统维护。字段含义与示例见 [info.ini](references/info-ini.md)。`config.json` 声明安装器支持的 Composer/NPM 依赖，`web` 与 `web-nuxt` 的 NPM 依赖分属不同字段，不能假设 `web` 的配置会自动处理 `web-nuxt`；字段说明见 [config.json](references/config-json.md)。
+- 新安装所需的完整表结构放在模块根目录 `install.sql`；表名使用 `__PREFIX__` 和模块标识前缀。首次发布前可以合并未发布的增量脚本；发布后保留已有安装的升级路径，不要把 `CREATE TABLE IF NOT EXISTS` 当作现有表的字段升级。规则与升级注意见 [install.sql](references/install-sql.md)。
+- 核心类实现任务所需的 `install`、`uninstall`、`update`、`enable`、`disable` 钩子。确认 SQL、文件复制与钩子的执行时序，避免重复执行非幂等操作；卸载只清理本模块拥有的资源。命名、钩子与菜单/配置示例见 [核心控制器](references/core-controller.md)；运行期扩展见 [行为事件](references/events.md)。
+- 需要修改 `web/src/main.ts` 时，先看 [WEB 引导程序](references/web-bootstrap.md) 和项目已有机制，优先用 `webBootstrap.stub` 注入，避免无条件覆盖启动文件。
 
 ## WEB 与 Nuxt 完整性
 
@@ -33,4 +35,18 @@ description: Develop, package, and verify installable BuildAdmin modules, includ
 3. 项目有包校验脚本时运行它；否则直接检查 ZIP 结构、清单和关键文件。有条件时在隔离环境验证全新安装、SQL 前缀替换、菜单注册和页面构建。对已有数据库的升级单独验证，避免用新装 SQL 覆盖数据。
 4. 汇报安装包路径、包含范围、验证结果，以及安装后仍需执行的部署步骤。
 
-具体调用方式见 [通用使用示例](examples/basic.md)。技能来源见 [来源记录](references/source.md)。
+具体调用方式见 [通用使用示例](examples/basic.md)。
+
+## 参考文件
+
+| 文件 | 内容 | 何时读 |
+| --- | --- | --- |
+| [包结构与安装映射](references/package-layout.md) | 模块能力、ZIP 根布局、可覆盖目录、安装顺序、打包与上架要求 | 定包结构、排查文件没装进去 |
+| [info.ini](references/info-ini.md) | `info.ini` 字段、示例、读取方式 | 建包、改模块标识或版本 |
+| [config.json](references/config-json.md) | Composer/NPM/Nuxt 依赖字段、`protectedFiles`、`composerConfig` | 声明依赖、处理共享文件 |
+| [install.sql](references/install-sql.md) | SQL 规则、示例、升级与重复执行 | 建表、改表、写安装脚本 |
+| [核心控制器](references/core-controller.md) | 控制器命名、五个钩子、菜单与配置示例 | 写 install/uninstall/enable/disable/update |
+| [行为事件](references/events.md) | `AppInit` 入口、ThinkPHP 与 BuildAdmin 事件表 | 运行期监听事件 |
+| [WEB 引导程序](references/web-bootstrap.md) | `.stub` 的 6 个代码块、标记格式、版本限制 | 向 main.ts / App.vue / web-nuxt/app.vue 注入代码 |
+
+各文件的来源、抓取日期与整理方式见 [来源与适用范围](references/source.md)。
